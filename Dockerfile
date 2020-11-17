@@ -1,5 +1,4 @@
 FROM ubuntu:16.04
-ADD http://git.inspur.com/common/common-dockerfiles/mirrors/raw/master/ubuntu-tsinghua-http/sources-16.04.list /etc/apt/sources.list
 RUN apt-get update -y && apt-get install -y python g++ inetutils-ping make git sudo curl wget xz-utils apt-transport-https;\
     apt-get install -y mlocate && updatedb;
 
