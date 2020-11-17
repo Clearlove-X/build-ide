@@ -1,5 +1,5 @@
 FROM ubuntu:16.04
-#ADD http://git.inspur.com/common/common-dockerfiles/mirrors/raw/master/ubuntu-tsinghua-http/sources-16.04.list /etc/apt/sources.list
+ADD http://git.inspur.com/common/common-dockerfiles/mirrors/raw/master/ubuntu-tsinghua-http/sources-16.04.list /etc/apt/sources.list
 RUN apt-get update -y && apt-get install -y python g++ inetutils-ping make git sudo curl wget xz-utils apt-transport-https;\
     apt-get install -y mlocate && updatedb;
 
@@ -24,7 +24,10 @@ RUN wget https://pkg-config.freedesktop.org/releases/pkg-config-0.29.2.tar.gz;\
 ENV PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig/
 RUN apt-get install -y libx11-dev libxkbfile-dev libsecret-1-dev;\
     npm install native-keymap -g --unsafe-perm;\
-    sudo npm install keytar -g --unsafe-perm;
+    sudo npm install keytar -g --unsafe-perm;\
+    npm install uglify-es -g;\
+    ln -s /usr/local/nodejs/bin/uglifyjs /usr/local/bin;
+
 
 
 
