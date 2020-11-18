@@ -17,7 +17,7 @@ RUN wget -O nodejs.tar.xz https://service.cloud.inspur.com/regionsvc-cn-north-3/
     tar xf nodejs.tar -C /usr/local;\
     ln -s /usr/local/node-v12.18.1-linux-x64/bin/node /usr/local/bin;\
     ln -s /usr/local/node-v12.18.1-linux-x64/bin/npm /usr/local/bin;\
-    rm nodejs.tar.xz;
+    rm nodejs.tar;
 
 #安装jdk8 64位
 RUN wget -O jdk8.tar.gz  https://service.cloud.inspur.com/regionsvc-cn-north-3/cicd/packages/v1/versions/960/actions/download;\
@@ -64,4 +64,7 @@ ENV SERVICE_URL=https://marketplace.cloudstudio.net/extensions
 ENV PASSWORD=$ps
 
 CMD ["code-server"]
+
+
+
 
