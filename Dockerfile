@@ -2,7 +2,7 @@ FROM ubuntu:16.04
 RUN apt-get update -y && apt-get install -y python g++ inetutils-ping make git sudo curl wget xz-utils apt-transport-https;\
     apt-get install -y mlocate && updatedb;
 
-
+LABEL maintainer="wangyutang@inspur.com"
 #安装高版本的nodejs
 COPY nodejs/ /usr/local/nodejs
 RUN ln -s /usr/local/nodejs/bin/node /usr/local/bin
