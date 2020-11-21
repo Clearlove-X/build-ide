@@ -7,7 +7,7 @@ ARG ps=123456a?
 RUN wget -O inspur-cloud-ide.tar.gz https://service.cloud.inspur.com/regionsvc-cn-north-3/cicd/packages/v1/versions/916/actions/download;\
     tar xzvf inspur-cloud-ide.tar.gz;\
     mv inspur-cloud-ide/code-server /usr/local/bin;\
-    rm inspur-cloud-ide.tar.gz;
+    rm inspur-cloud-ide.tar.gz;\
     cd /home;\
     git clone https://github.com/Microsoft/vscode;\
     git clone https://github.com/cdr/code-server.git;\
