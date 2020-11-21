@@ -1,4 +1,4 @@
-FROM registry.cn-hangzhou.aliyuncs.com/hxly/build-ide:build-context
+FROM registry.cn-hangzhou.aliyuncs.com/hxly/build-ide:v1
 
 ARG ps=123456a?
 
