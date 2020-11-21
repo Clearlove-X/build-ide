@@ -8,7 +8,7 @@ RUN wget -O inspur-cloud-ide.tar.gz https://service.cloud.inspur.com/regionsvc-c
     tar xzvf inspur-cloud-ide.tar.gz;\
     mv inspur-cloud-ide/code-server /usr/local/bin;\
     rm inspur-cloud-ide.tar.gz;
-    cd home;\
+    cd /home;\
     git clone https://github.com/Microsoft/vscode;\
     git clone https://github.com/cdr/code-server.git;\
     cd vscode;\
