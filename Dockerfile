@@ -1,37 +1,39 @@
-FROM ubuntu:18.04
+FROM ubuntu:18.04 as common
 
-LABEL maintainer="wangyutang@inspur.com"
+ENV DEBIAN_FRONTEND noninteractive
 
 ARG NODE_VERSION=12.18.3
-ARG YARN_VERSION=1.22.5
-ARG GO_VERSION=1.15
-ARG GRADLE_VERSION=6.7.1
-ARG JAVA_VERSION=jdk8u275-b01
-ARG MAVEN_VERSION=3.6.3
-ARG LLVM=12
-ARG CMAKE_VERSION=3.18.1
-ARG PASSWORD=123456a?
+ENV NODE_VERSION $NODE_VERSION
+ENV YARN_VERSION 1.22.5
 
-RUN apt-get update;\
-    apt-get -y install curl;
+# Common deps
+RUN apt-get update && \
+    apt-get -y install build-essential \
+                       curl \
+                       git \
+                       gpg \
+                       python \
+                       wget \
+                       xz-utils \
+                       sudo \
+    && \
+    apt-get clean && \
+    apt-get autoremove -y && \
+    rm -rf /var/cache/apt/* && \
+    rm -rf /var/lib/apt/lists/* && \
+    rm -rf /tmp/*
 
-RUN apt-get update;\
-    apt-get -y install build-essential curl git gpg python wget xz xz-utils sudo unzip inetutils-ping vim;\
-    apt-get clean;\
-    apt-get autoremove -y;\
-    rm -rf /var/cache/apt/* ;\
-    rm -rf /var/lib/apt/lists/* ;\
-    rm -rf /tmp/*;
-#RUN /bin/sh -c adduser --disabled-password --gecos '' theia &&     adduser theia sudo &&     echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
-
-RUN  echo $NODE_VERSION; \
-    curl -I http://www.baidu.com ;
+## User account
+RUN adduser --disabled-password --gecos '' theia && \
+    adduser theia sudo && \
+    echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
 # Install node and yarn
 # From: https://github.com/nodejs/docker-node/blob/6b8d86d6ad59e0d1e7a94cec2e909cad137a028f/8/Dockerfile
+
 # gpg keys listed at https://github.com/nodejs/node#release-keys
-RUN set -ex ;\
-    for key in \
+RUN set -ex \
+    && for key in \
     4ED778F539E3634C779C87C6D7062848A1AB005C \
     B9E2F5981AA6E0CD28160D9FF13993A75599653C \
     94AE36675C464D64BAFA68DD7434390BDBE9B9C5 \
@@ -51,7 +53,6 @@ RUN set -ex ;\
     gpg --batch --keyserver ha.pool.sks-keyservers.net --recv-keys "$key" ; \
     done
 
-ENV NODE_VERSION $NODE_VERSION
 RUN ARCH= && dpkgArch="$(dpkg --print-architecture)" \
     && case "${dpkgArch##*-}" in \
     amd64) ARCH='x64';; \
@@ -66,10 +67,25 @@ RUN ARCH= && dpkgArch="$(dpkg --print-architecture)" \
     && curl -SLO --compressed "https://nodejs.org/dist/v$NODE_VERSION/SHASUMS256.txt.asc" \
     && gpg --batch --decrypt --output SHASUMS256.txt SHASUMS256.txt.asc \
     && grep " node-v$NODE_VERSION-linux-$ARCH.tar.xz\$" SHASUMS256.txt | sha256sum -c - \
-    && ls \
     && tar -xJf "node-v$NODE_VERSION-linux-$ARCH.tar.xz" -C /usr/local --strip-components=1 --no-same-owner \
     && rm "node-v$NODE_VERSION-linux-$ARCH.tar.xz" SHASUMS256.txt.asc SHASUMS256.txt \
     && ln -s /usr/local/bin/node /usr/local/bin/nodejs
 
-
-
+RUN set -ex \
+    && for key in \
+    6A010C5166006599AA17F08146C2130DFD2497F5 \
+    ; do \
+    gpg --batch --keyserver ipv4.pool.sks-keyservers.net --recv-keys "$key" || \
+    gpg --batch --keyserver pool.sks-keyservers.net --recv-keys "$key" || \
+    gpg --batch --keyserver pgp.mit.edu --recv-keys "$key" || \
+    gpg --batch --keyserver keyserver.pgp.com --recv-keys "$key" || \
+    gpg --batch --keyserver ha.pool.sks-keyservers.net --recv-keys "$key" ; \
+    done \
+    && curl -fSLO --compressed "https://yarnpkg.com/downloads/$YARN_VERSION/yarn-v$YARN_VERSION.tar.gz" \
+    && curl -fSLO --compressed "https://yarnpkg.com/downloads/$YARN_VERSION/yarn-v$YARN_VERSION.tar.gz.asc" \
+    && gpg --batch --verify yarn-v$YARN_VERSION.tar.gz.asc yarn-v$YARN_VERSION.tar.gz \
+    && mkdir -p /opt/yarn \
+    && tar -xzf yarn-v$YARN_VERSION.tar.gz -C /opt/yarn --strip-components=1 \
+    && ln -s /opt/yarn/bin/yarn /usr/local/bin/yarn \
+    && ln -s /opt/yarn/bin/yarn /usr/local/bin/yarnpkg \
+    && rm yarn-v$YARN_VERSION.tar.gz.asc yarn-v$YARN_VERSION.tar.gz
