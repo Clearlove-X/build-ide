@@ -1,4 +1,4 @@
-FROM ubuntu:16.04
+FROM ubuntu:18.04
 
 LABEL maintainer="wangyutang@inspur.com"
 
@@ -12,13 +12,25 @@ ARG LLVM=12
 ARG CMAKE_VERSION=3.18.1
 ARG PASSWORD=123456a?
 
-RUN apt-get update;\
-    apt-get -y install build-essential curl git gpg python wget xz-utils sudo unzip inetutils-ping vim;\
-    apt-get clean;\
-    apt-get autoremove -y;\
-    rm -rf /var/cache/apt/* ;\
-    rm -rf /var/lib/apt/lists/* ;\
-    rm -rf /tmp/*;
+# Common deps
+RUN apt-get update && \
+    apt-get -y install build-essential \
+                       curl \
+                       git \
+                       gpg \
+                       python \
+                       wget \
+                       xz-utils \
+                       sudo \
+                       unzip \
+                       inetutils-ping \
+                       vim \
+    && \
+    apt-get clean && \
+    apt-get autoremove -y && \
+    rm -rf /var/cache/apt/* && \
+    rm -rf /var/lib/apt/lists/* && \
+    rm -rf /tmp/*
 #RUN /bin/sh -c adduser --disabled-password --gecos '' theia &&     adduser theia sudo &&     echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
 # Install node and yarn
@@ -56,8 +68,6 @@ RUN ARCH= && dpkgArch="$(dpkg --print-architecture)" \
     i386) ARCH='x86';; \
     *) echo "unsupported architecture"; exit 1 ;; \
     esac \
-    &&  echo $NODE_VERSION \
-    && curl -I http://www.baidu.com \
     && curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-$ARCH.tar.xz" \
     && curl -SLO --compressed "https://nodejs.org/dist/v$NODE_VERSION/SHASUMS256.txt.asc" \
     && gpg --batch --decrypt --output SHASUMS256.txt SHASUMS256.txt.asc \
@@ -180,7 +190,7 @@ ENV JAVA_HOME=/opt/java/openjdk \
 # gradle
 #From https://hub.docker.com/layers/gradle/library/gradle/jdk8/images/sha256-d70cbeb69588a24c9fa886880c1230303b3caffee2bbd7d45a8a5b41fbf1ed77?context=explore
 #From https://github.com/keeganwitt/docker-gradle/blob/master/hotspot/jdk8/Dockerfile
-ENV GRADLE_VERSION=$GRADLE_VERSION
+ENV GRADLE_VERSION $GRADLE_VERSION
 ARG GRADLE_DOWNLOAD_SHA256=3239b5ed86c3838a37d983ac100573f64c1f3fd8e1eb6c89fa5f9529b5ec091d
 RUN set -o errexit -o nounset \
     && echo "Downloading Gradle" \
@@ -200,7 +210,7 @@ RUN set -o errexit -o nounset \
 
 #maven
 #https://github.com/carlossg/docker-maven/blob/26ba49149787c85b9c51222b47c00879b2a0afde/openjdk-8/Dockerfile
-ENV MAVEN_VERSION=$MAVEN_VERSION
+ENV MAVEN_VERSION $MAVEN_VERSION
 ARG USER_HOME_DIR="/root"
 ARG SHA=c35a1803a6e70a126e80b2b3ae33eed961f83ed74d18fcd16909b2d44d7dada3203f1ffe726c17ef8dcca2dcaa9fca676987befeadc9b9f759967a8cb77181c0
 ARG BASE_URL=https://apache.osuosl.org/maven/maven-3/${MAVEN_VERSION}/binaries
@@ -217,7 +227,7 @@ ENV MAVEN_CONFIG "$USER_HOME_DIR/.m2"
 
 # C/C++
 # public LLVM PPA, development version of LLVM
-ENV LLVM=$LLVM
+ENV LLVM $LLVM
 RUN wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - && \
     echo "deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic main" > /etc/apt/sources.list.d/llvm.list && \
     apt-get update && \
@@ -236,7 +246,7 @@ RUN wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - && \
     ln -s /usr/bin/clangd-$LLVM /usr/bin/clangd
 
 # Install latest stable CMake
-ENV CMAKE_VERSION=$CMAKE_VERSION
+ENV CMAKE_VERSION $CMAKE_VERSION
 RUN wget "https://github.com/Kitware/CMake/releases/download/v$CMAKE_VERSION/cmake-$CMAKE_VERSION-Linux-x86_64.sh" && \
     chmod a+x cmake-$CMAKE_VERSION-Linux-x86_64.sh && \
     ./cmake-$CMAKE_VERSION-Linux-x86_64.sh --prefix=/usr/ --skip-license && \
@@ -244,7 +254,7 @@ RUN wget "https://github.com/Kitware/CMake/releases/download/v$CMAKE_VERSION/cma
 
 # Install .NET Core SDK
 #https://github.com/dotnet/dotnet-docker/blob/801573a24f0c45fabb0db24ff8d3425c1957e068/src/sdk/3.1/bionic/amd64/Dockerfile
-ENV dotnet_sdk_version=3.1.404
+ENV dotnet_sdk_version 3.1.404
 RUN curl -SL --output dotnet.tar.gz https://dotnetcli.azureedge.net/dotnet/Sdk/$dotnet_sdk_version/dotnet-sdk-$dotnet_sdk_version-linux-x64.tar.gz \
     && dotnet_sha512='94d8eca3b4e2e6c36135794330ab196c621aee8392c2545a19a991222e804027f300d8efd152e9e4893c4c610d6be8eef195e30e6f6675285755df1ea49d3605' \
     && echo "$dotnet_sha512 dotnet.tar.gz" | sha512sum -c - \
@@ -258,7 +268,7 @@ RUN curl -SL --output dotnet.tar.gz https://dotnetcli.azureedge.net/dotnet/Sdk/$
 
 # Swift
 ARG SWIFT_VERSION=5.2.4
-ENV SWIFT_VERSION=$SWIFT_VERSION
+ENV SWIFT_VERSION $SWIFT_VERSION
 RUN apt-get update \
     && apt-get install -y binutils libc6-dev libcurl4 libedit2 libgcc-5-dev libpython2.7 libsqlite3-0 libstdc++-5-dev libxml2 pkg-config tzdata zlib1g-dev \
     && curl -SLO https://swift.org/builds/swift-$SWIFT_VERSION-release/ubuntu1804/swift-$SWIFT_VERSION-RELEASE/swift-$SWIFT_VERSION-RELEASE-ubuntu18.04.tar.gz \
@@ -285,7 +295,7 @@ RUN wget -O inspur-cloud-ide.tar.gz https://service.cloud.inspur.com/regionsvc-c
     mv inspur-cloud-ide/code-server /usr/local/bin/;\
     rm inspur-cloud-ide.tar.gz;
 
-ENV SERVICE_URL=https://marketplace.cloudstudio.net/extensions
-ENV PASSWORD=$PASSWORD
+ENV SERVICE_URL https://marketplace.cloudstudio.net/extensions
+ENV PASSWORD $PASSWORD
 
 CMD ["code-server"]
