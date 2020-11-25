@@ -303,6 +303,13 @@ RUN apt-get update \
     && ln -s /usr/local/swift/usr/bin/lldb* /usr/bin \
     && ln -s /usr/local/swift/usr/bin/sourcekit-lsp /usr/bin
 
+#预装插件  想办法内置进去
+RUN wget -O all-extensions.tar.gz https://service.cloud.inspur.com/regionsvc-cn-north-3/cicd/packages/v1/versions/962/actions/download;\
+    mkdir -p /root/.local/share/code-server/;\
+    tar zxvf all-extensions.tar.gz -C /root/.local/share/code-server/;\
+    mv /root/.local/share/code-server/all-extensions-2/ /root/.local/share/code-server/extensions/;\
+    rm all-extensions.tar.gz;
+
 #安装code-server
 RUN wget -O inspur-cloud-ide.tar.gz https://service.cloud.inspur.com/regionsvc-cn-north-3/cicd/packages/v1/versions/916/actions/download;\
     tar zxvf inspur-cloud-ide.tar.gz;\
