@@ -16,7 +16,7 @@ RUN apt-get update;\
     apt-get -y install curl;
 
 RUN apt-get update;\
-    apt-get -y install build-essential curl git gpg python wget xz-utils sudo unzip inetutils-ping vim;\
+    apt-get -y install build-essential curl git gpg python wget xz xz-utils sudo unzip inetutils-ping vim;\
     apt-get clean;\
     apt-get autoremove -y;\
     rm -rf /var/cache/apt/* ;\
