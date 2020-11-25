@@ -191,6 +191,7 @@ ENV JAVA_HOME=/opt/java/openjdk \
 #From https://hub.docker.com/layers/gradle/library/gradle/jdk8/images/sha256-d70cbeb69588a24c9fa886880c1230303b3caffee2bbd7d45a8a5b41fbf1ed77?context=explore
 #From https://github.com/keeganwitt/docker-gradle/blob/master/hotspot/jdk8/Dockerfile
 ENV GRADLE_VERSION $GRADLE_VERSION
+ENV GRADLE_HOME /opt/gradle
 ARG GRADLE_DOWNLOAD_SHA256=3239b5ed86c3838a37d983ac100573f64c1f3fd8e1eb6c89fa5f9529b5ec091d
 RUN set -o errexit -o nounset \
     && echo "Downloading Gradle" \
@@ -266,7 +267,7 @@ RUN curl -SL --output dotnet.tar.gz https://dotnetcli.azureedge.net/dotnet/Sdk/$
     && dotnet help
 
 
-# Swift
+# Swift  指定了ubuntu18.04版本
 ARG SWIFT_VERSION=5.2.4
 ENV SWIFT_VERSION $SWIFT_VERSION
 RUN apt-get update \
