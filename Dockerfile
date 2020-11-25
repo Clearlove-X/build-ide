@@ -2,6 +2,9 @@ FROM ubuntu:18.04
 
 LABEL maintainer="wangyutang@inspur.com"
 
+#安装nzdata时需要用户交互，故设此
+ARG DEBIAN_FRONTEND=noninteractive
+
 ARG NODE_VERSION=12.18.3
 ARG YARN_VERSION=1.22.5
 ARG GO_VERSION=1.15
@@ -267,7 +270,7 @@ RUN curl -SL --output dotnet.tar.gz https://dotnetcli.azureedge.net/dotnet/Sdk/$
     && dotnet help
 
 
-# Swift  指定了ubuntu18.04版本
+# Swift  指定了ubuntu18.04版本 tzdata需要用户交互
 ARG SWIFT_VERSION=5.2.4
 ENV SWIFT_VERSION $SWIFT_VERSION
 RUN apt-get update \
