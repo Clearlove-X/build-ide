@@ -5,7 +5,8 @@ ARG VSCODE_VERSION=dev-base-1.41
 ENV OUT=/path/to/output/build
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
 
-RUN cd /root;\
+RUN set -ex;\
+    cd /root;\
     git clone -b build https://github.com/Clearlove-X/code-server-github.git;\
     cd code-server-github;\
     yarn build $VSCODE_VERSION 2.1698;\
