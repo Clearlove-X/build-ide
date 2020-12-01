@@ -9,10 +9,12 @@ ARG NODE_VERSION=12.18.3
 ARG YARN_VERSION=1.22.5
 ARG GO_VERSION=1.15
 ARG GRADLE_VERSION=6.7.1
-ARG JAVA_VERSION=jdk8u275-b01
+#ARG JAVA_VERSION=jdk8u275-b01
+ARG JAVA_VERSION=jdk-11.0.9.1+1
 ARG MAVEN_VERSION=3.6.3
 ARG LLVM=12
 ARG CMAKE_VERSION=3.18.1
+ARG CODE_SERVER_VERSION=v2-1
 ARG PASSWORD=123456a?
 
 # Common deps
@@ -138,41 +140,78 @@ RUN go get -u -v -d github.com/stamblerre/gocode && \
     go build -o $GOPATH/bin/gocode-gomod github.com/stamblerre/gocode
 ENV GOPATH=/home/go
 
-# Java 安装jdk8
+# Java
 #From https://hub.docker.com/layers/gradle/library/gradle/jdk8/images/sha256-d70cbeb69588a24c9fa886880c1230303b3caffee2bbd7d45a8a5b41fbf1ed77?context=explore
 #From https://hub.docker.com/layers/adoptopenjdk/library/adoptopenjdk/8-jdk/images/sha256-6088b567aa2856b7a4a6dbfb4e597458af479c21362e32134e9d6f1fcd9ccbd8?context=explore
 #https://hub.docker.com/_/adoptopenjdk?tab=description&page=1&ordering=last_updated
 #https://github.com/docker-library/docs/blob/master/adoptopenjdk/README.md#supported-tags-and-respective-dockerfile-links
 #https://github.com/AdoptOpenJDK/openjdk-docker/blob/a765cdfe876fd87610d256c7d056aa1f860b4f74/8/jdk/ubuntu/Dockerfile.hotspot.releases.full
 ENV JAVA_VERSION=$JAVA_VERSION
+#jdk8
+#RUN set -eux; \
+#    ARCH="$(dpkg --print-architecture)"; \
+#    case "${ARCH}" in \
+#       aarch64|arm64) \
+#         ESUM='aeade06192ce4544f998b4957cd2c0ed3f9f8eac08b0de5d2ed55c55283364af'; \
+#         BINARY_URL='https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u275-b01/OpenJDK8U-jdk_aarch64_linux_hotspot_8u275b01.tar.gz'; \
+#         ;; \
+#       armhf|armv7l) \
+#         ESUM='e2e41a8705061dfcc766bfb6b7edd4c699e94aac68e4deeb28c8e76734a46fb7'; \
+#         BINARY_URL='https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u275-b01/OpenJDK8U-jdk_arm_linux_hotspot_8u275b01.tar.gz'; \
+#         ;; \
+#       ppc64el|ppc64le) \
+#         ESUM='a7b1c803e581f226216f73aca878bfd1b149c422b63e42e64eeeecda78c2253b'; \
+#         BINARY_URL='https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u275-b01/OpenJDK8U-jdk_ppc64le_linux_hotspot_8u275b01.tar.gz'; \
+#         ;; \
+#       s390x) \
+#         ESUM='f513b895d28bdc2011b698e4a9ee3ea524d0e7bb62d87b0f53814a326573ec04'; \
+#         BINARY_URL='https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u275-b01/OpenJDK8U-jdk_s390x_linux_hotspot_8u275b01.tar.gz'; \
+#         LIBFFI_SUM='05e456a2e8ad9f20db846ccb96c483235c3243e27025c3e8e8e358411fd48be9'; \
+#         LIBFFI_URL='http://launchpadlibrarian.net/354371408/libffi6_3.2.1-8_s390x.deb'; \
+#         curl -LfsSo /tmp/libffi6.deb ${LIBFFI_URL}; \
+#         echo "${LIBFFI_SUM} /tmp/libffi6.deb" | sha256sum -c -; \
+#         apt-get install -y --no-install-recommends /tmp/libffi6.deb; \
+#         rm -rf /tmp/libffi6.deb; \
+#         ;; \
+#       amd64|x86_64) \
+#         ESUM='06fb04075ed503013beb12ab87963b2ca36abe9e397a0c298a57c1d822467c29'; \
+#         BINARY_URL='https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u275-b01/OpenJDK8U-jdk_x64_linux_hotspot_8u275b01.tar.gz'; \
+#         ;; \
+#       *) \
+#         echo "Unsupported arch: ${ARCH}"; \
+#         exit 1; \
+#         ;; \
+#    esac; \
+#    curl -LfsSo /tmp/openjdk.tar.gz ${BINARY_URL}; \
+#    echo "${ESUM} */tmp/openjdk.tar.gz" | sha256sum -c -; \
+#    mkdir -p /opt/java/openjdk; \
+#    cd /opt/java/openjdk; \
+#    tar -xf /tmp/openjdk.tar.gz --strip-components=1; \
+#    rm -rf /tmp/openjdk.tar.gz;
+
+#jdk11
 RUN set -eux; \
     ARCH="$(dpkg --print-architecture)"; \
     case "${ARCH}" in \
        aarch64|arm64) \
-         ESUM='aeade06192ce4544f998b4957cd2c0ed3f9f8eac08b0de5d2ed55c55283364af'; \
-         BINARY_URL='https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u275-b01/OpenJDK8U-jdk_aarch64_linux_hotspot_8u275b01.tar.gz'; \
+         ESUM='e9cea040cdf5d9b0a2986feaf87662e1aef68e876f4d66664cb2be36e26db412'; \
+         BINARY_URL='https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.9.1%2B1/OpenJDK11U-jdk_aarch64_linux_hotspot_11.0.9.1_1.tar.gz'; \
          ;; \
        armhf|armv7l) \
-         ESUM='e2e41a8705061dfcc766bfb6b7edd4c699e94aac68e4deeb28c8e76734a46fb7'; \
-         BINARY_URL='https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u275-b01/OpenJDK8U-jdk_arm_linux_hotspot_8u275b01.tar.gz'; \
+         ESUM='871618e96c57ef348fa068ffebf7e935c29c8601d59790a0d08dfd0d5c6f8d66'; \
+         BINARY_URL='https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.9.1%2B1/OpenJDK11U-jdk_arm_linux_hotspot_11.0.9.1_1.tar.gz'; \
          ;; \
        ppc64el|ppc64le) \
-         ESUM='a7b1c803e581f226216f73aca878bfd1b149c422b63e42e64eeeecda78c2253b'; \
-         BINARY_URL='https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u275-b01/OpenJDK8U-jdk_ppc64le_linux_hotspot_8u275b01.tar.gz'; \
+         ESUM='d94b6b46a14ab0974b1c1b89661741126d8cf8a0068b471b8f5fa286a71636b1'; \
+         BINARY_URL='https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.9.1%2B1/OpenJDK11U-jdk_ppc64le_linux_hotspot_11.0.9.1_1.tar.gz'; \
          ;; \
        s390x) \
-         ESUM='f513b895d28bdc2011b698e4a9ee3ea524d0e7bb62d87b0f53814a326573ec04'; \
-         BINARY_URL='https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u275-b01/OpenJDK8U-jdk_s390x_linux_hotspot_8u275b01.tar.gz'; \
-         LIBFFI_SUM='05e456a2e8ad9f20db846ccb96c483235c3243e27025c3e8e8e358411fd48be9'; \
-         LIBFFI_URL='http://launchpadlibrarian.net/354371408/libffi6_3.2.1-8_s390x.deb'; \
-         curl -LfsSo /tmp/libffi6.deb ${LIBFFI_URL}; \
-         echo "${LIBFFI_SUM} /tmp/libffi6.deb" | sha256sum -c -; \
-         apt-get install -y --no-install-recommends /tmp/libffi6.deb; \
-         rm -rf /tmp/libffi6.deb; \
+         ESUM='65cc100cc353d77c237f28b24323b647805d30267dcd6505ab7fdb538c16da49'; \
+         BINARY_URL='https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.9.1%2B1/OpenJDK11U-jdk_s390x_linux_hotspot_11.0.9.1_1.tar.gz'; \
          ;; \
        amd64|x86_64) \
-         ESUM='06fb04075ed503013beb12ab87963b2ca36abe9e397a0c298a57c1d822467c29'; \
-         BINARY_URL='https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u275-b01/OpenJDK8U-jdk_x64_linux_hotspot_8u275b01.tar.gz'; \
+         ESUM='e388fd7f3f2503856d0b04fde6e151cbaa91a1df3bcebf1deddfc3729d677ca3'; \
+         BINARY_URL='https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.9.1%2B1/OpenJDK11U-jdk_x64_linux_hotspot_11.0.9.1_1.tar.gz'; \
          ;; \
        *) \
          echo "Unsupported arch: ${ARCH}"; \
@@ -304,14 +343,15 @@ RUN apt-get update \
     && ln -s /usr/local/swift/usr/bin/sourcekit-lsp /usr/bin
 
 #预装插件  想办法内置进去
-RUN wget -O all-extensions.tar.gz https://service.cloud.inspur.com/regionsvc-cn-north-3/cicd/packages/v1/versions/962/actions/download;\
+RUN wget -O extensions.tar.gz https://service.cloud.inspur.com/regionsvc-cn-north-3/cicd/ide/v1/binaries/action/download?path=/group1/binaries/devcloud19/extensions/v1-0/extensions.tar.gz;\
     mkdir -p /root/.local/share/code-server/;\
-    tar zxvf all-extensions.tar.gz -C /root/.local/share/code-server/;\
-    mv /root/.local/share/code-server/all-extensions-2/ /root/.local/share/code-server/extensions/;\
-    rm all-extensions.tar.gz;
+    tar zxvf extensions.tar.gz -C /root/.local/share/code-server/;\
+    rm extensions.tar.gz;
 
 #安装code-server
-RUN wget -O inspur-cloud-ide.tar.gz https://service.cloud.inspur.com/regionsvc-cn-north-3/cicd/packages/v1/versions/916/actions/download;\
+# v2.0 - loading页面
+# v2.1 - terminal默认打开bash
+RUN wget -O inspur-cloud-ide.tar.gz https://service.cloud.inspur.com/regionsvc-cn-north-3/cicd/ide/v1/binaries/action/download?path=/group1/binaries/devcloud19/inspur-cloud-ide/$CODE_SERVER_VERSION/inspur-cloud-ide.tar.gz;\
     tar zxvf inspur-cloud-ide.tar.gz;\
     mv inspur-cloud-ide/code-server /usr/local/bin/;\
     rm inspur-cloud-ide.tar.gz;
