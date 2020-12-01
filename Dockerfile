@@ -13,4 +13,5 @@ RUN cd /root;\
     cd /path/to/output/build/build/code-server2.1698-vscdev-base-1.41-linux-x86_64-built/out/vs/workbench;\
     cp workbench.web.api.js workbench.web.api.js.bak;\
     uglifyjs workbench.web.api.js -m -o workbench.web.api.js;\
+    cd /root/code-server-github;\
     yarn binary $VSCODE_VERSION 2.1698;
