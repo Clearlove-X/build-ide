@@ -18,3 +18,7 @@ RUN set -ex;\
     yarn release:standalone;\
     yarn package;\
     ls;
+RUN ls release;\
+    ls release-gcp;\
+    ls release-packages;\
+    ls release-standalone;
