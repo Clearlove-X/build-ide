@@ -18,7 +18,9 @@ RUN set -ex;\
     yarn release:standalone;\
     yarn package;\
     ls;
-RUN ls release;\
+RUN pwd;\
+    cd /root/code-server;\
+    ls release;\
     ls release-gcp;\
     ls release-packages;\
     ls release-standalone;
