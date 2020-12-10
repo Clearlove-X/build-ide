@@ -11,7 +11,6 @@ RUN set -ex;\
     cd vscode;\
     git checkout v1.51.1;\
     git branch;\
-    rm -rf .git;\
     cd /root/code-server;\
     yarn;\
     yarn vscode;\
