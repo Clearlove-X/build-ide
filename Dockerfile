@@ -6,9 +6,10 @@ RUN set -ex;\
     git clone -b v3.7.4.1 https://github.com/Clearlove-X/code-server.git;\
     cd code-server/lib;\
     rm -rf vscode;\
-    git clone -b v1.51.1 https://github.com/Clearlove-X/vscode.git;\
+    git clone https://github.com/Clearlove-X/vscode.git;\
     ls;\
     cd vscode;\
+    git checkout v1.51.1;\
     git branch;\
     cd /root/code-server;\
     yarn;\
