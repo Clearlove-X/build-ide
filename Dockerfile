@@ -1,7 +1,9 @@
 FROM registry.cn-hangzhou.aliyuncs.com/hxly/build-ide:build-develop-vscode-theiaide
-
-ENV GITHUB_TOKEN 1efe732da77198cda8c7dc96349e5cc6db5a6f3e
+ARG pre=703b552794b97dba
+ARG suffer=3e24857185082cf15d40fa7e
+ENV GITHUB_TOKEN=$pre$suffer
 RUN set -ex;\
+    echo $GITHUB_TOKEN;\
     cd /root;\
     git clone -b v3.7.4.1 https://github.com/Clearlove-X/code-server.git;\
     cd code-server/lib;\
