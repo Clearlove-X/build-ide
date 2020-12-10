@@ -2,10 +2,10 @@ FROM registry.cn-hangzhou.aliyuncs.com/hxly/build-ide:build-develop-vscode-theia
 
 ARG GITHUB_TOKEN=806d279f91df42c5a58845abb838734f47b14a37
 RUN cd /root;\
-    git clone -b v3.7.4.1 http://git.inspur.com/wangyutang/code-server.git;\
+    git clone -b v3.7.4.1 https://github.com/Clearlove-X/code-server.git;\
     cd code-server/lib;\
     rm vscode;\
-    git clone -b v1.51.1 http://git.inspur.com/wangyutang/vscode.git;\
+    git clone -b v1.51.1 https://github.com/Clearlove-X/vscode.git;\
     cd /root/code-server;\
     yarn;\
     yarn vscode;\
@@ -15,7 +15,6 @@ RUN cd /root;\
     yarn release:standalone;\
     yarn package;\
     ls;
-
 
 
 
