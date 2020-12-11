@@ -1,3 +1,26 @@
+#https://github.com/Clearlove-X/build-ide/blob/all-in-one-2/Dockerfile
+#编译环境
+FROM registry.cn-hangzhou.aliyuncs.com/hxly/build-ide:build-develop-vscode-theiaide
+ARG pre=703b552794b97dba
+ARG suffer=3e24857185082cf15d40fa7e
+ENV GITHUB_TOKEN=$pre$suffer
+RUN set -ex;\
+    echo $GITHUB_TOKEN;\
+    cd /root;\
+    git clone -b v3.7.4.1 https://github.com/Clearlove-X/code-server.git;\
+    cd code-server/lib;\
+    rm -rf vscode;\
+    git clone -b v1.51.1 https://github.com/Clearlove-X/vscode.git;\
+    cd /root/code-server;\
+    yarn;\
+    yarn vscode;\
+    yarn build;\
+    yarn build:vscode;\
+    yarn release;\
+    yarn release:standalone;\
+    yarn package;
+
+#运行环境
 FROM ubuntu:18.04
 
 LABEL maintainer="wangyutang@inspur.com"
@@ -30,6 +53,8 @@ RUN apt-get update && \
                        unzip \
                        inetutils-ping \
                        vim \
+                       net-tools \
+                       nginx \
     && \
     apt-get clean && \
     apt-get autoremove -y && \
@@ -37,6 +62,10 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/* && \
     rm -rf /tmp/*
 #RUN /bin/sh -c adduser --disabled-password --gecos '' theia &&     adduser theia sudo &&     echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+
+#配置nginx  code-server 3.0.0之后的版本需要用nginx代理才能让远程访问
+COPY code-server /etc/nginx/sites-available
+RUN ln -s /etc/nginx/sites-available/code-server /etc/nginx/sites-enabled/code-server;\
 
 # Install node and yarn
 # From: https://github.com/nodejs/docker-node/blob/6b8d86d6ad59e0d1e7a94cec2e909cad137a028f/8/Dockerfile
@@ -351,10 +380,15 @@ RUN wget -O extensions.tar.gz https://service.cloud.inspur.com/regionsvc-cn-nort
 #安装code-server
 # v2.0 - loading页面
 # v2.1 - terminal默认打开bash
-RUN wget -O inspur-cloud-ide.tar.gz https://service.cloud.inspur.com/regionsvc-cn-north-3/cicd/ide/v1/binaries/action/download?path=/group1/binaries/devcloud19/inspur-cloud-ide/$CODE_SERVER_VERSION/inspur-cloud-ide.tar.gz;\
-    tar zxvf inspur-cloud-ide.tar.gz;\
-    mv inspur-cloud-ide/code-server /usr/local/bin/;\
-    rm inspur-cloud-ide.tar.gz;
+#RUN wget -O inspur-cloud-ide.tar.gz https://service.cloud.inspur.com/regionsvc-cn-north-3/cicd/ide/v1/binaries/action/download?path=/group1/binaries/devcloud19/inspur-cloud-ide/$CODE_SERVER_VERSION/inspur-cloud-ide.tar.gz;\
+COPY --from=0 /root/code-server/release-packages/code-server-3.7.4-linux-amd64.tar.gz /opt
+RUN cd /opt;\
+    tar zxvf code-server-3.7.4-linux-amd64.tar.gz;\
+    ln -s /opt/code-server-3.7.4-linux-amd64/code-server /usr/local/bin/code-server;\
+    rm code-server-3.7.4-linux-amd64.tar.gz;\
+    mkdir -p /root/.local/share/code-server/User;\
+    cd /root/.local/share/code-server/User;\
+    echo '{\n  "locale": "zh-cn"\n} ' > argv.json
 
 ENV SERVICE_URL https://marketplace.cloudstudio.net/extensions
 ENV PASSWORD $PASSWORD
