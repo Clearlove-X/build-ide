@@ -54,7 +54,6 @@ RUN apt-get update && \
                        inetutils-ping \
                        vim \
                        net-tools \
-                       nginx \
     && \
     apt-get clean && \
     apt-get autoremove -y && \
@@ -63,9 +62,10 @@ RUN apt-get update && \
     rm -rf /tmp/*
 #RUN /bin/sh -c adduser --disabled-password --gecos '' theia &&     adduser theia sudo &&     echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
-#配置nginx  code-server 3.0.0之后的版本需要用nginx代理才能让远程访问
-COPY code-server /etc/nginx/sites-available
-RUN ln -s /etc/nginx/sites-available/code-server /etc/nginx/sites-enabled/code-server;\
+#配置nginx  code-server 3.0.0之后的版本需要用nginx代理才能让远程访问;k8s有nginx代理，不需再做了
+#COPY code-server /etc/nginx/sites-available
+#RUN ln -s /etc/nginx/sites-available/code-server /etc/nginx/sites-enabled/code-server;\
+#    service nginx start;
 
 # Install node and yarn
 # From: https://github.com/nodejs/docker-node/blob/6b8d86d6ad59e0d1e7a94cec2e909cad137a028f/8/Dockerfile
