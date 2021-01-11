@@ -1,8 +1,9 @@
 #https://github.com/Clearlove-X/build-ide/blob/all-in-one-2/Dockerfile
 #编译环境
 FROM registry.cn-hangzhou.aliyuncs.com/hxly/build-ide:build-develop-vscode-theiaide
-ARG pre=703b552794b97dba
 ARG suffer=3e24857185082cf15d40fa7e
+ARG pre=703b552794b97dba
+
 ENV GITHUB_TOKEN=$pre$suffer
 RUN set -ex;\
     echo $GITHUB_TOKEN;\
@@ -32,8 +33,8 @@ ARG NODE_VERSION=12.18.3
 ARG YARN_VERSION=1.22.5
 ARG GO_VERSION=1.15
 ARG GRADLE_VERSION=6.7.1
-#ARG JAVA_VERSION=jdk8u275-b01
-ARG JAVA_VERSION=jdk-11.0.9.1+1
+ARG JAVA_VERSION_8=jdk8u275-b01
+ARG JAVA_VERSION_11=jdk-11.0.9.1+1
 ARG MAVEN_VERSION=3.6.3
 ARG LLVM=12
 ARG CMAKE_VERSION=3.18.1
@@ -175,48 +176,49 @@ ENV GOPATH=/home/go
 #https://hub.docker.com/_/adoptopenjdk?tab=description&page=1&ordering=last_updated
 #https://github.com/docker-library/docs/blob/master/adoptopenjdk/README.md#supported-tags-and-respective-dockerfile-links
 #https://github.com/AdoptOpenJDK/openjdk-docker/blob/a765cdfe876fd87610d256c7d056aa1f860b4f74/8/jdk/ubuntu/Dockerfile.hotspot.releases.full
-ENV JAVA_VERSION=$JAVA_VERSION
+ENV JAVA_VERSION_8=$JAVA_VERSION_8
+ENV JAVA_VERSION_11=$JAVA_VERSION_11
 #jdk8
-#RUN set -eux; \
-#    ARCH="$(dpkg --print-architecture)"; \
-#    case "${ARCH}" in \
-#       aarch64|arm64) \
-#         ESUM='aeade06192ce4544f998b4957cd2c0ed3f9f8eac08b0de5d2ed55c55283364af'; \
-#         BINARY_URL='https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u275-b01/OpenJDK8U-jdk_aarch64_linux_hotspot_8u275b01.tar.gz'; \
-#         ;; \
-#       armhf|armv7l) \
-#         ESUM='e2e41a8705061dfcc766bfb6b7edd4c699e94aac68e4deeb28c8e76734a46fb7'; \
-#         BINARY_URL='https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u275-b01/OpenJDK8U-jdk_arm_linux_hotspot_8u275b01.tar.gz'; \
-#         ;; \
-#       ppc64el|ppc64le) \
-#         ESUM='a7b1c803e581f226216f73aca878bfd1b149c422b63e42e64eeeecda78c2253b'; \
-#         BINARY_URL='https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u275-b01/OpenJDK8U-jdk_ppc64le_linux_hotspot_8u275b01.tar.gz'; \
-#         ;; \
-#       s390x) \
-#         ESUM='f513b895d28bdc2011b698e4a9ee3ea524d0e7bb62d87b0f53814a326573ec04'; \
-#         BINARY_URL='https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u275-b01/OpenJDK8U-jdk_s390x_linux_hotspot_8u275b01.tar.gz'; \
-#         LIBFFI_SUM='05e456a2e8ad9f20db846ccb96c483235c3243e27025c3e8e8e358411fd48be9'; \
-#         LIBFFI_URL='http://launchpadlibrarian.net/354371408/libffi6_3.2.1-8_s390x.deb'; \
-#         curl -LfsSo /tmp/libffi6.deb ${LIBFFI_URL}; \
-#         echo "${LIBFFI_SUM} /tmp/libffi6.deb" | sha256sum -c -; \
-#         apt-get install -y --no-install-recommends /tmp/libffi6.deb; \
-#         rm -rf /tmp/libffi6.deb; \
-#         ;; \
-#       amd64|x86_64) \
-#         ESUM='06fb04075ed503013beb12ab87963b2ca36abe9e397a0c298a57c1d822467c29'; \
-#         BINARY_URL='https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u275-b01/OpenJDK8U-jdk_x64_linux_hotspot_8u275b01.tar.gz'; \
-#         ;; \
-#       *) \
-#         echo "Unsupported arch: ${ARCH}"; \
-#         exit 1; \
-#         ;; \
-#    esac; \
-#    curl -LfsSo /tmp/openjdk.tar.gz ${BINARY_URL}; \
-#    echo "${ESUM} */tmp/openjdk.tar.gz" | sha256sum -c -; \
-#    mkdir -p /opt/java/openjdk; \
-#    cd /opt/java/openjdk; \
-#    tar -xf /tmp/openjdk.tar.gz --strip-components=1; \
-#    rm -rf /tmp/openjdk.tar.gz;
+RUN set -eux; \
+    ARCH="$(dpkg --print-architecture)"; \
+    case "${ARCH}" in \
+       aarch64|arm64) \
+         ESUM='aeade06192ce4544f998b4957cd2c0ed3f9f8eac08b0de5d2ed55c55283364af'; \
+         BINARY_URL='https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u275-b01/OpenJDK8U-jdk_aarch64_linux_hotspot_8u275b01.tar.gz'; \
+         ;; \
+       armhf|armv7l) \
+         ESUM='e2e41a8705061dfcc766bfb6b7edd4c699e94aac68e4deeb28c8e76734a46fb7'; \
+         BINARY_URL='https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u275-b01/OpenJDK8U-jdk_arm_linux_hotspot_8u275b01.tar.gz'; \
+         ;; \
+       ppc64el|ppc64le) \
+         ESUM='a7b1c803e581f226216f73aca878bfd1b149c422b63e42e64eeeecda78c2253b'; \
+         BINARY_URL='https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u275-b01/OpenJDK8U-jdk_ppc64le_linux_hotspot_8u275b01.tar.gz'; \
+         ;; \
+       s390x) \
+         ESUM='f513b895d28bdc2011b698e4a9ee3ea524d0e7bb62d87b0f53814a326573ec04'; \
+         BINARY_URL='https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u275-b01/OpenJDK8U-jdk_s390x_linux_hotspot_8u275b01.tar.gz'; \
+         LIBFFI_SUM='05e456a2e8ad9f20db846ccb96c483235c3243e27025c3e8e8e358411fd48be9'; \
+         LIBFFI_URL='http://launchpadlibrarian.net/354371408/libffi6_3.2.1-8_s390x.deb'; \
+         curl -LfsSo /tmp/libffi6.deb ${LIBFFI_URL}; \
+         echo "${LIBFFI_SUM} /tmp/libffi6.deb" | sha256sum -c -; \
+         apt-get install -y --no-install-recommends /tmp/libffi6.deb; \
+         rm -rf /tmp/libffi6.deb; \
+         ;; \
+       amd64|x86_64) \
+         ESUM='06fb04075ed503013beb12ab87963b2ca36abe9e397a0c298a57c1d822467c29'; \
+         BINARY_URL='https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u275-b01/OpenJDK8U-jdk_x64_linux_hotspot_8u275b01.tar.gz'; \
+         ;; \
+       *) \
+         echo "Unsupported arch: ${ARCH}"; \
+         exit 1; \
+         ;; \
+    esac; \
+    curl -LfsSo /tmp/openjdk.tar.gz ${BINARY_URL}; \
+    echo "${ESUM} */tmp/openjdk.tar.gz" | sha256sum -c -; \
+    mkdir -p /opt/java/openjdk-8; \
+    cd /opt/java/openjdk-8; \
+    tar -xf /tmp/openjdk.tar.gz --strip-components=1; \
+    rm -rf /tmp/openjdk.tar.gz;
 
 #jdk11
 RUN set -eux; \
@@ -249,13 +251,13 @@ RUN set -eux; \
     esac; \
     curl -LfsSo /tmp/openjdk.tar.gz ${BINARY_URL}; \
     echo "${ESUM} */tmp/openjdk.tar.gz" | sha256sum -c -; \
-    mkdir -p /opt/java/openjdk; \
-    cd /opt/java/openjdk; \
+    mkdir -p /opt/java/openjdk-11; \
+    cd /opt/java/openjdk-11; \
     tar -xf /tmp/openjdk.tar.gz --strip-components=1; \
     rm -rf /tmp/openjdk.tar.gz;
 
-ENV JAVA_HOME=/opt/java/openjdk \
-    PATH="/opt/java/openjdk/bin:$PATH"
+ENV JAVA_HOME=/opt/java/openjdk-11 \
+    PATH="/opt/java/openjdk-11/bin:$PATH"
 
 
 # gradle
@@ -390,6 +392,10 @@ RUN cd /opt;\
     cd /root/.local/share/code-server/User;\
     echo '{\n  "locale": "zh-cn"\n} ' > argv.json
 
+RUN echo 'echo "=================================== WARNING ===================================="' >> /root/.bashrc;\
+    echo 'echo "只有/home路径挂载永久存储卷（PVC）,请将重要的文件防在/home路径下。"' >> /root/.bashrc;\
+    echo 'echo "建议每天push代码到代码仓库。"' >> /root/.bashrc;\
+    echo 'echo "所有重启容器（pod）的操作，比如更换登录密码，会导致除了/home路径下的文件消失重置"' >> /root/.bashrc
 ENV SERVICE_URL https://marketplace.cloudstudio.net/extensions
 ENV PASSWORD $PASSWORD
 
