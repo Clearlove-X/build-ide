@@ -13,7 +13,9 @@ RUN set -ex;\
     rm -rf vscode;\
     git clone -b v1.51.1 https://github.com/Clearlove-X/vscode.git;\
     cd /root/code-server;\
+    yarn add axios --registry=https://registry.npm.taobao.org;\
     yarn;\
+    ls node_modules;\
     yarn vscode;\
     yarn build;\
     yarn build:vscode;\
@@ -395,7 +397,8 @@ RUN cd /opt;\
 RUN echo 'echo "=================================== WARNING ===================================="' >> /root/.bashrc;\
     echo 'echo "只有/home路径挂载永久存储卷（PVC）,请将重要的文件防在/home路径下。"' >> /root/.bashrc;\
     echo 'echo "建议每天push代码到代码仓库。"' >> /root/.bashrc;\
-    echo 'echo "所有重启容器（pod）的操作，比如更换登录密码，会导致除了/home路径下的文件消失重置"' >> /root/.bashrc
+    echo 'echo "所有重启容器（pod）的操作，比如更换登录密码，会导致除了/home路径下的文件消失重置"' >> /root/.bashrc;\
+    echo 'echo "================================================================================"' >> /root/.bashrc
 ENV SERVICE_URL https://marketplace.cloudstudio.net/extensions
 ENV PASSWORD $PASSWORD
 
