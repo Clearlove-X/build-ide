@@ -258,8 +258,8 @@ RUN set -eux; \
     tar -xf /tmp/openjdk.tar.gz --strip-components=1; \
     rm -rf /tmp/openjdk.tar.gz;
 
-ENV JAVA_HOME=/opt/java/openjdk-11 \
-    PATH="/opt/java/openjdk-11/bin:$PATH"
+ENV JAVA_HOME=/opt/java/openjdk-8 \
+    PATH="/opt/java/openjdk-8/bin:$PATH"
 
 
 # gradle
@@ -381,6 +381,13 @@ RUN wget -O extensions.tar.gz https://service.cloud.inspur.com/regionsvc-cn-nort
     tar zxvf extensions.tar.gz -C /root/.local/share/code-server/;\
     rm extensions.tar.gz;
 
+#安装chrome
+RUN sudo wget http://www.linuxidc.com/files/repo/google-chrome.list -P /etc/apt/sources.list.d/;\
+    wget -q -O - https://dl.google.com/linux/linux_signing_key.pub  | sudo apt-key add -;\
+    sudo apt-get update;\
+    sudo apt-get install -y google-chrome-stable
+
+
 #安装code-server
 # v2.0 - loading页面
 # v2.1 - terminal默认打开bash
@@ -392,7 +399,8 @@ RUN cd /opt;\
     rm code-server-3.7.4-linux-amd64.tar.gz;\
     mkdir -p /root/.local/share/code-server/User;\
     cd /root/.local/share/code-server/User;\
-    echo '{\n  "locale": "zh-cn"\n} ' > argv.json
+    echo '{\n  "locale": "zh-cn"\n} ' > argv.json;\
+    echo '{\n  "java.home": "/opt/java/openjdk-11",\n  "browser-preview.startUrl": "http://git.inspur.com",\n  "terminal.integrated.shell.linux": "/bin/bash"\n}' > settings.json
 
 RUN echo 'echo "=================================== WARNING ===================================="' >> /root/.bashrc;\
     echo 'echo "只有/home路径挂载永久存储卷（PVC）,请将重要的文件防在/home路径下。"' >> /root/.bashrc;\
