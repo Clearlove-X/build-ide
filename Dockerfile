@@ -13,9 +13,9 @@ RUN set -ex;\
     rm -rf vscode;\
     git clone -b v1.51.1 https://github.com/Clearlove-X/vscode.git;\
     cd /root/code-server;\
-    yarn add axios --registry=https://registry.npm.taobao.org;\
     yarn;\
     ls node_modules;\
+    cat package.json;\
     yarn vscode;\
     yarn build;\
     yarn build:vscode;\
