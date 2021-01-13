@@ -386,7 +386,7 @@ RUN sudo wget http://www.linuxidc.com/files/repo/google-chrome.list -P /etc/apt/
     wget -q -O - https://dl.google.com/linux/linux_signing_key.pub  | sudo apt-key add -;\
     sudo apt-get update;\
     sudo apt-get install -y google-chrome-stable;\
-    apt-get install fonts-droid-fallback ttf-wqy-zenhei ttf-wqy-microhei fonts-arphic-ukai fonts-arphic-uming
+    apt-get install -y fonts-droid-fallback ttf-wqy-zenhei ttf-wqy-microhei fonts-arphic-ukai fonts-arphic-uming
 
 
 #安装code-server
