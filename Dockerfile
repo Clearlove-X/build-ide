@@ -15,6 +15,7 @@ RUN set -ex;\
     cd /root/code-server;\
     yarn;\
     ls node_modules;\
+    cat package.json;\
     yarn vscode;\
     yarn build;\
     yarn build:vscode;\
@@ -375,16 +376,17 @@ RUN apt-get update \
     && ln -s /usr/local/swift/usr/bin/sourcekit-lsp /usr/bin
 
 #预装插件  想办法内置进去
-RUN wget -O extensions.tar.gz https://service.cloud.inspur.com/regionsvc-cn-north-3/cicd/ide/v1/binaries/action/download?path=/group1/binaries/devcloud19/extensions/v1-0/extensions.tar.gz;\
+RUN wget -O extensions.tar.gz https://service.cloud.inspur.com/regionsvc-cn-north-3/cicd/ide/v1/binaries/action/download?path=/group1/binaries/devcloud19/extensions/v1-1/extensions.tar.gz;\
     mkdir -p /root/.local/share/code-server/;\
     tar zxvf extensions.tar.gz -C /root/.local/share/code-server/;\
     rm extensions.tar.gz;
 
-#安装chrome
+#安装chrome,以及browser preview插件页面中文乱码是空格的情况，安装中文字体解决
 RUN sudo wget http://www.linuxidc.com/files/repo/google-chrome.list -P /etc/apt/sources.list.d/;\
     wget -q -O - https://dl.google.com/linux/linux_signing_key.pub  | sudo apt-key add -;\
     sudo apt-get update;\
-    sudo apt-get install -y google-chrome-stable
+    sudo apt-get install -y google-chrome-stable;\
+    apt-get install fonts-droid-fallback ttf-wqy-zenhei ttf-wqy-microhei fonts-arphic-ukai fonts-arphic-uming
 
 
 #安装code-server
@@ -404,7 +406,7 @@ RUN cd /opt;\
 RUN echo 'echo "=================================== WARNING ===================================="' >> /root/.bashrc;\
     echo 'echo "只有/home路径挂载永久存储卷（PVC）,请将重要的文件防在/home路径下。"' >> /root/.bashrc;\
     echo 'echo "建议每天push代码到代码仓库。"' >> /root/.bashrc;\
-    echo 'echo "所有重启容器（pod）的操作，比如更换登录密码，会导致除了/home路径下的文件消失重置"' >> /root/.bashrc;\
+    echo 'echo "所有重启容器（pod）的操作，比如更换登录密码，会导致除了/home路径下的文件消失重置。"' >> /root/.bashrc;\
     echo 'echo "================================================================================"' >> /root/.bashrc
 ENV SERVICE_URL https://marketplace.cloudstudio.net/extensions
 ENV PASSWORD $PASSWORD
