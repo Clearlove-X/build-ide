@@ -15,7 +15,6 @@ RUN set -ex;\
     cd /root/code-server;\
     yarn;\
     ls node_modules;\
-    cat package.json;\
     yarn vscode;\
     yarn build;\
     yarn build:vscode;\
