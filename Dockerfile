@@ -376,9 +376,10 @@ RUN apt-get update \
     && ln -s /usr/local/swift/usr/bin/sourcekit-lsp /usr/bin
 
 #预装插件  想办法内置进去
-RUN wget -O extensions.tar.gz https://service.cloud.inspur.com/regionsvc-cn-north-3/cicd/ide/v1/binaries/action/download?path=/group1/binaries/devcloud19/extensions/v1-1/extensions.tar.gz;\
-    mkdir -p /root/.local/share/code-server/;\
-    tar zxvf extensions.tar.gz -C /root/.local/share/code-server/;\
+#RUN wget -O extensions.tar.gz https://service.cloud.inspur.com/regionsvc-cn-north-3/cicd/ide/v1/binaries/action/download?path=/group1/binaries/devcloud19/extensions/v1-1/extensions.tar.gz;\
+RUN wget -O extensions.tar.gz https://github.com/Clearlove-X/build-ide/releases/download/v1.2/extensions.tar.gz;\
+    mkdir -p /home/ide-settings;\
+    tar zxvf extensions.tar.gz -C /home/ide-settings/;\
     rm extensions.tar.gz;
 
 #安装chrome,以及browser preview插件页面中文乱码是空格的情况，安装中文字体解决
@@ -398,15 +399,15 @@ RUN cd /opt;\
     tar zxvf code-server-3.7.4-linux-amd64.tar.gz;\
     ln -s /opt/code-server-3.7.4-linux-amd64/code-server /usr/local/bin/code-server;\
     rm code-server-3.7.4-linux-amd64.tar.gz;\
-    mkdir -p /root/.local/share/code-server/User;\
-    cd /root/.local/share/code-server/User;\
+    mkdir -p /home/ide-settings/User;\
+    cd /home/ide-settings/User;\
     echo '{\n  "locale": "zh-cn"\n} ' > argv.json;\
     echo '{\n  "java.home": "/opt/java/openjdk-11",\n  "browser-preview.startUrl": "http://git.inspur.com",\n  "terminal.integrated.shell.linux": "/bin/bash"\n}' > settings.json
 
 RUN echo 'echo "=================================== WARNING ===================================="' >> /root/.bashrc;\
-    echo 'echo "只有/home路径挂载永久存储卷（PVC）,请将重要的文件防在/home路径下。"' >> /root/.bashrc;\
+    echo 'echo "只有/home路径挂载永久存储卷,请将重要的文件防在/home路径下。"' >> /root/.bashrc;\
     echo 'echo "建议每天push代码到代码仓库。"' >> /root/.bashrc;\
-    echo 'echo "所有重启容器（pod）的操作，比如更换登录密码，会导致除了/home路径下的文件消失重置。"' >> /root/.bashrc;\
+    echo 'echo "所有重启容器的操作，比如更换登录密码，会导致除了/home路径下的文件消失重置。"' >> /root/.bashrc;\
     echo 'echo "================================================================================"' >> /root/.bashrc
 ENV SERVICE_URL https://marketplace.cloudstudio.net/extensions
 ENV PASSWORD $PASSWORD
