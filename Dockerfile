@@ -15,6 +15,7 @@ RUN set -ex;\
     cd /root/code-server;\
     yarn;\
     ls node_modules;\
+    cat package.json;\
     yarn vscode;\
     yarn build;\
     yarn build:vscode;\
@@ -376,10 +377,11 @@ RUN apt-get update \
 
 #预装插件  想办法内置进去
 #RUN wget -O extensions.tar.gz https://service.cloud.inspur.com/regionsvc-cn-north-3/cicd/ide/v1/binaries/action/download?path=/group1/binaries/devcloud19/extensions/v1-1/extensions.tar.gz;\
-RUN wget -O extensions.tar.gz https://github.com/Clearlove-X/build-ide/releases/download/v1.2/extensions.tar.gz;\
-    mkdir -p /home/ide-settings;\
-    tar zxvf extensions.tar.gz -C /home/ide-settings/;\
-    rm extensions.tar.gz;
+RUN cd /tmp;\
+    wget -O extensions.tar.gz https://github.com/Clearlove-X/build-ide/releases/download/v1.2/extensions.tar.gz;
+#    mkdir -p /home/ide-settings;\
+#    tar zxvf extensions.tar.gz -C /home/ide-settings/;\
+#    rm extensions.tar.gz;
 
 #安装chrome,以及browser preview插件页面中文乱码是空格的情况，安装中文字体解决
 RUN sudo wget http://www.linuxidc.com/files/repo/google-chrome.list -P /etc/apt/sources.list.d/;\
@@ -397,11 +399,11 @@ COPY --from=0 /root/code-server/release-packages/code-server-3.7.4-linux-amd64.t
 RUN cd /opt;\
     tar zxvf code-server-3.7.4-linux-amd64.tar.gz;\
     ln -s /opt/code-server-3.7.4-linux-amd64/code-server /usr/local/bin/code-server;\
-    rm code-server-3.7.4-linux-amd64.tar.gz;\
-    mkdir -p /home/ide-settings/User;\
-    cd /home/ide-settings/User;\
-    echo '{\n  "locale": "zh-cn"\n} ' > argv.json;\
-    echo '{\n  "java.home": "/opt/java/openjdk-11",\n  "browser-preview.startUrl": "http://git.inspur.com",\n  "terminal.integrated.shell.linux": "/bin/bash"\n}' > settings.json
+    rm code-server-3.7.4-linux-amd64.tar.gz;
+#    mkdir -p /home/ide-settings/User;\
+#    cd /home/ide-settings/User;\
+#    echo '{\n  "locale": "zh-cn"\n} ' > argv.json;\
+#    echo '{\n  "java.home": "/opt/java/openjdk-11",\n  "browser-preview.startUrl": "http://git.inspur.com",\n  "terminal.integrated.shell.linux": "/bin/bash"\n}' > settings.json
 
 RUN echo 'echo "=================================== WARNING ===================================="' >> /root/.bashrc;\
     echo 'echo "只有/home路径挂载永久存储卷,请将重要的文件防在/home路径下。"' >> /root/.bashrc;\
@@ -411,4 +413,7 @@ RUN echo 'echo "=================================== WARNING ====================
 ENV SERVICE_URL https://marketplace.cloudstudio.net/extensions
 ENV PASSWORD $PASSWORD
 
-CMD ["code-server"]
+COPY start.sh /usr/local/bin
+RUN  chmod +x /usr/local/bin/start.sh
+
+CMD ["start.sh"]
