@@ -1,4 +1,4 @@
-code-server --port 8088 --user-data-dir /home/ide-settings
+nohup code-server --port 8088 --user-data-dir /home/ide-settings &
 if [ ! -d "/home/ide-settings/extensions" ]
         then
                 mkdir -p /home/ide-settings
