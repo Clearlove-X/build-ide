@@ -416,4 +416,4 @@ ENV PASSWORD $PASSWORD
 COPY start.sh /usr/local/bin
 RUN  chmod +x /usr/local/bin/start.sh
 
-CMD ["start.sh"]
+CMD ["sh","-c","/usr/local/bin/start.sh"]
