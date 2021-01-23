@@ -1,4 +1,3 @@
-nohup code-server --port 8088 --user-data-dir /home/ide-settings &
 if [ ! -d "/home/ide-settings/extensions" ]
         then
                 mkdir -p /home/ide-settings
@@ -17,3 +16,4 @@ if [ ! -f "/home/ide-settings/User/settings.json" ]
                 cd /home/ide-settings/User
                 echo '{\n  "java.home": "/opt/java/openjdk-11",\n  "browser-preview.startUrl": "http://git.inspur.com",\n  "terminal.integrated.shell.linux": "/bin/bash"\n}' > settings.json
 fi 
+code-server --port 8088 --user-data-dir /home/ide-settings
